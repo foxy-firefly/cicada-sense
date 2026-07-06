@@ -1,0 +1,250 @@
+---
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: docker/backend/Dockerfile
+      target: dev
+    user: "${LOCAL_UID:-1000}:${LOCAL_GID:-1000}"
+    working_dir: /workspace/application/monitoring-workspace/backend
+    command:
+      - node-dev-entrypoint
+      - npm
+      - run
+      - dev
+    stdin_open: true
+    tty: true
+    init: true
+    volumes:
+      - type: bind
+        source: "${HOST_WORKSPACE_ROOT:-.}/application"
+        target: /workspace/application
+    environment:
+      BIOME_CONFIG_PATH: /workspace/application/biome.json
+      NODE_ENV: development
+      PORT: "3000"
+      DATABASE_URL: postgresql://cicada@postgres:5432/cicada_sense
+      REDIS_URL: redis://redis:6379
+      CHOKIDAR_USEPOLLING: "1"
+      HOME: /tmp/node-home
+      NPM_CONFIG_CACHE: /tmp/node-home/.npm
+    expose:
+      - "3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - cicada-sense-network
+      - traefik-proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.cicada-backend.rule=Host(`cicada-sense.localhost`) && (PathPrefix(`/api`) || PathPrefix(`/socket.io`))"
+      - "traefik.http.routers.cicada-backend.entrypoints=http"
+      - "traefik.http.routers.cicada-backend.priority=100"
+      - "traefik.http.services.cicada-backend.loadbalancer.server.port=3000"
+      - "traefik.docker.network=traefik-proxy"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "require('http').get('http://127.0.0.1:3000/api/health/live', (r) => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
+
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/frontend/Dockerfile
+      target: dev
+    user: "${LOCAL_UID:-1000}:${LOCAL_GID:-1000}"
+    working_dir: /workspace/application/monitoring-workspace/frontend
+    command:
+      - node-dev-entrypoint
+      - npm
+      - run
+      - dev
+    stdin_open: true
+    tty: true
+    init: true
+    volumes:
+      - type: bind
+        source: "${HOST_WORKSPACE_ROOT:-.}/application"
+        target: /workspace/application
+    environment:
+      BIOME_CONFIG_PATH: /workspace/application/biome.json
+      NODE_ENV: development
+      CHOKIDAR_USEPOLLING: "1"
+      VITE_DEV_PROXY_TARGET: http://backend:3000
+      HOME: /tmp/node-home
+      NPM_CONFIG_CACHE: /tmp/node-home/.npm
+    expose:
+      - "5173"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - cicada-sense-network
+      - traefik-proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.cicada-frontend.rule=Host(`cicada-sense.localhost`) && !PathPrefix(`/api`) && !PathPrefix(`/socket.io`)"
+      - "traefik.http.routers.cicada-frontend.entrypoints=http"
+      - "traefik.http.routers.cicada-frontend.priority=1"
+      - "traefik.http.services.cicada-frontend.loadbalancer.server.port=5173"
+      - "traefik.docker.network=traefik-proxy"
+
+  live-data-generator-api:
+    build:
+      context: .
+      dockerfile: docker/live-data-generator/Dockerfile
+      target: dev
+    user: "${LOCAL_UID:-1000}:${LOCAL_GID:-1000}"
+    working_dir: /workspace/application/live-data-generator
+    command:
+      - node-dev-entrypoint
+      - npm
+      - run
+      - dev:backend
+    stdin_open: true
+    tty: true
+    init: true
+    volumes:
+      - type: bind
+        source: "${HOST_WORKSPACE_ROOT:-.}/application"
+        target: /workspace/application
+    environment:
+      BIOME_CONFIG_PATH: /workspace/application/biome.json
+      NODE_ENV: development
+      PORT: "3100"
+      CICADA_BACKEND_URL: http://backend:3000
+      CHOKIDAR_USEPOLLING: "1"
+      HOME: /tmp/node-home
+      NPM_CONFIG_CACHE: /tmp/node-home/.npm
+    expose:
+      - "3100"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - cicada-sense-network
+      - traefik-proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.cicada-generator-api.rule=Host(`generator.cicada-sense.localhost`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.cicada-generator-api.entrypoints=http"
+      - "traefik.http.routers.cicada-generator-api.service=cicada-generator-api"
+      - "traefik.http.services.cicada-generator-api.loadbalancer.server.port=3100"
+      - "traefik.docker.network=traefik-proxy"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "require('http').get('http://127.0.0.1:3100/api/health/live', (r) => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
+
+  live-data-generator:
+    build:
+      context: .
+      dockerfile: docker/live-data-generator/Dockerfile
+      target: dev
+    user: "${LOCAL_UID:-1000}:${LOCAL_GID:-1000}"
+    working_dir: /workspace/application/live-data-generator
+    command:
+      - node-dev-entrypoint
+      - npm
+      - run
+      - dev:frontend
+    stdin_open: true
+    tty: true
+    init: true
+    volumes:
+      - type: bind
+        source: "${HOST_WORKSPACE_ROOT:-.}/application"
+        target: /workspace/application
+    environment:
+      BIOME_CONFIG_PATH: /workspace/application/biome.json
+      NODE_ENV: development
+      CHOKIDAR_USEPOLLING: "1"
+      VITE_GENERATOR_PROXY_TARGET: http://live-data-generator-api:3100
+      HOME: /tmp/node-home
+      NPM_CONFIG_CACHE: /tmp/node-home/.npm
+    expose:
+      - "5174"
+    depends_on:
+      live-data-generator-api:
+        condition: service_healthy
+    networks:
+      - cicada-sense-network
+      - traefik-proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.cicada-generator-ui.rule=Host(`generator.cicada-sense.localhost`) && !PathPrefix(`/api`)"
+      - "traefik.http.routers.cicada-generator-ui.entrypoints=http"
+      - "traefik.http.routers.cicada-generator-ui.service=cicada-generator-ui"
+      - "traefik.http.services.cicada-generator-ui.loadbalancer.server.port=5174"
+      - "traefik.docker.network=traefik-proxy"
+
+  postgres:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: cicada_sense
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_USER: cicada
+    volumes:
+      - postgres-data:/var/lib/postgresql
+    networks:
+      - cicada-sense-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cicada -d cicada_sense"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:8-alpine
+    restart: unless-stopped
+    networks:
+      - cicada-sense-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  object-storage:
+    image: minio/minio:RELEASE.2025-05-24T17-08-30Z
+    command: server /data --console-address :9001
+    environment:
+      MINIO_ROOT_PASSWORD: minioadmin
+      MINIO_ROOT_USER: minioadmin
+    expose:
+      - "9000"
+      - "9001"
+    volumes:
+      - object-storage-data:/data
+    networks:
+      - cicada-sense-network
+
+networks:
+  cicada-sense-network:
+    driver: bridge
+  traefik-proxy:
+    external: true
+
+volumes:
+  object-storage-data:
+  postgres-data:

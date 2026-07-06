@@ -1,0 +1,4 @@
+{{- if and .Values.enabled .Values.api.enabled -}}
+{{- $ctx := dict "root" . "chart" .Chart "component" "live-data-generator-api" "values" .Values.api -}}
+{{ include "cicada-sense.component.manifests" $ctx }}
+{{- end -}}

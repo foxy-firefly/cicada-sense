@@ -1,0 +1,37 @@
+{
+  "name": "Cicada Sense",
+  "image": "mcr.microsoft.com/devcontainers/base:debian",
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "configureZshAsDefaultShell": true
+    },
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+      "moby": false
+    },
+    "ghcr.io/jsburckhardt/devcontainer-features/mise:1": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "remoteEnv": {
+    "GITHUB_TOKEN": "${localEnv:GITHUB_TOKEN}"
+  },
+  "mounts": ["source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"],
+  "postCreateCommand": "mise trust mise.toml && mise install",
+  "remoteUser": "vscode",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "eamodio.gitlens",
+        "github.vscode-github-actions",
+        "github.copilot",
+        "github.copilot-chat",
+        "ms-vscode.makefile-tools",
+        "biomejs.biome",
+        "ms-azuretools.vscode-docker",
+        "redhat.vscode-yaml",
+        "ms-azuretools.vscode-containers",
+        "Tim-Koehler.helm-intellisense",
+        "hverlin.mise-vscode"
+      ]
+    }
+  }
+}

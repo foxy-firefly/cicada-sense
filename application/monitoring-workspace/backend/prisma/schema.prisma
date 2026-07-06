@@ -1,0 +1,121 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Organization {
+  id        String    @id
+  name      String
+  projects  Project[]
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  @@map("organizations")
+}
+
+model Project {
+  id             String       @id
+  organizationId String       @map("organization_id")
+  name           String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  sites          Site[]
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
+
+  @@map("projects")
+}
+
+model Site {
+  id             String    @id
+  organizationId String    @map("organization_id")
+  projectId      String    @map("project_id")
+  name           String
+  latitude       Float
+  longitude      Float
+  habitatScore   Int       @map("habitat_score")
+  project        Project   @relation(fields: [projectId], references: [id])
+  sensors        Sensor[]
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  @@map("sites")
+}
+
+model Sensor {
+  id                      String   @id
+  organizationId          String   @map("organization_id")
+  projectId               String   @map("project_id")
+  siteId                  String   @map("site_id")
+  name                    String
+  latitude                Float
+  longitude               Float
+  status                  String
+  expectedIntervalSeconds Int      @map("expected_interval_seconds")
+  site                    Site     @relation(fields: [siteId], references: [id])
+  createdAt               DateTime @default(now()) @map("created_at")
+  updatedAt               DateTime @updatedAt @map("updated_at")
+
+  @@map("sensors")
+}
+
+model Species {
+  id             String   @id
+  scientificName String   @map("scientific_name")
+  commonName     String   @map("common_name")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  @@map("species")
+}
+
+model Detection {
+  id             String   @id
+  organizationId String   @map("organization_id")
+  projectId      String   @map("project_id")
+  siteId         String   @map("site_id")
+  sensorId       String   @map("sensor_id")
+  speciesId      String   @map("species_id")
+  confidence     Float
+  intensity      Int
+  recordedAt     DateTime @map("recorded_at")
+  persistedAt    DateTime @default(now()) @map("persisted_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  @@index([siteId])
+  @@index([sensorId])
+  @@map("detections")
+}
+
+model SourceHealth {
+  sourceId                String   @id @map("source_id")
+  organizationId          String   @map("organization_id")
+  projectId               String   @map("project_id")
+  siteId                  String   @map("site_id")
+  status                  String
+  lastSeenAt              DateTime? @map("last_seen_at")
+  expectedIntervalSeconds Int      @map("expected_interval_seconds")
+  failureCount            Int      @map("failure_count")
+  persistedAt             DateTime @default(now()) @map("persisted_at")
+  updatedAt               DateTime @updatedAt @map("updated_at")
+
+  @@index([siteId])
+  @@map("source_health")
+}
+
+model Alert {
+  id             String   @id
+  organizationId String   @map("organization_id")
+  projectId      String   @map("project_id")
+  siteId         String   @map("site_id")
+  severity       String
+  kind           String
+  message        String
+  createdAt      DateTime @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  @@index([siteId])
+  @@map("alerts")
+}

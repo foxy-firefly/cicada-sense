@@ -1,0 +1,12 @@
+{
+  "threshold": 5,
+  "ignore": [
+    "**/application/*/dist/**",
+    "**/application/*/node_modules/**",
+    "**/application/*/coverage/**",
+    "**/application/*/junit.xml",
+    "**/charts/dist/**",
+    "**/charts/application/**/*.md",
+    "**/charts/application/**/*.yaml"
+  ]
+}

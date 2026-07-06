@@ -1,0 +1,275 @@
+enabled: true
+api:
+  enabled: true
+  replicaCount: 1
+  revisionHistoryLimit: 10
+  image:
+    registry: ghcr.io
+    repository: cicada-sense/live-data-generator
+    tag: "0.1.0"
+    digest: ""
+    pullPolicy: IfNotPresent
+  imagePullSecrets: []
+  serviceAccount:
+    create: true
+    name: ""
+    annotations: {}
+    automountServiceAccountToken: false
+  podAnnotations: {}
+  podLabels: {}
+  commonAnnotations: {}
+  commonLabels: {}
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+    runAsGroup: 10001
+    fsGroup: 10001
+    fsGroupChangePolicy: OnRootMismatch
+    seccompProfile:
+      type: RuntimeDefault
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+    privileged: false
+    readOnlyRootFilesystem: false
+    runAsNonRoot: true
+  command: []
+  args: []
+  env:
+    - name: PORT
+      value: "3100"
+    - name: CICADA_BACKEND_URL
+      value: 'http://{{ include "cicada-sense.component.fullname" (dict "root" . "component" "backend") }}:3000'
+  envFrom: []
+  containerPort: 3100
+  service:
+    enabled: true
+    type: ClusterIP
+    port: 3100
+    targetPort: http
+    annotations: {}
+    sessionAffinity: None
+  ingress:
+    enabled: false
+    className: ""
+    annotations: {}
+    hosts:
+      - host: generator.cicada-sense.example.com
+        paths:
+          - path: /api
+            pathType: Prefix
+    tls: []
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+  probes:
+    liveness:
+      enabled: true
+      httpGet:
+        path: /api/scenarios
+        port: http
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+    readiness:
+      enabled: true
+      httpGet:
+        path: /api/scenarios
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+    startup:
+      enabled: true
+      httpGet:
+        path: /api/scenarios
+        port: http
+      initialDelaySeconds: 0
+      periodSeconds: 5
+      timeoutSeconds: 5
+      failureThreshold: 12
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  autoscaling:
+    enabled: false
+    minReplicas: 2
+    maxReplicas: 4
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage:
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 1
+  networkPolicy:
+    enabled: true
+    allowSameNamespace: true
+    allowDns: true
+    extraIngress: []
+    extraEgress: []
+  nodeSelector: {}
+  affinity: {}
+  tolerations: []
+  topologySpreadConstraints: []
+  terminationGracePeriodSeconds: 30
+  volumes: []
+  volumeMounts: []
+  tests:
+    enabled: true
+    path: /api/scenarios
+    image:
+      registry: docker.io
+      repository: busybox
+      tag: "1.37.0"
+      digest: ""
+      pullPolicy: IfNotPresent
+ui:
+  enabled: true
+  replicaCount: 1
+  revisionHistoryLimit: 10
+  image:
+    registry: ghcr.io
+    repository: cicada-sense/live-data-generator
+    tag: "0.1.0"
+    digest: ""
+    pullPolicy: IfNotPresent
+  imagePullSecrets: []
+  serviceAccount:
+    create: true
+    name: ""
+    annotations: {}
+    automountServiceAccountToken: false
+  podAnnotations: {}
+  podLabels: {}
+  commonAnnotations: {}
+  commonLabels: {}
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+    runAsGroup: 10001
+    fsGroup: 10001
+    fsGroupChangePolicy: OnRootMismatch
+    seccompProfile:
+      type: RuntimeDefault
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+    privileged: false
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+  command:
+    - node
+    - static-server.mjs
+  args: []
+  env:
+    - name: PORT
+      value: "5174"
+  envFrom: []
+  containerPort: 5174
+  service:
+    enabled: true
+    type: ClusterIP
+    port: 5174
+    targetPort: http
+    annotations: {}
+    sessionAffinity: None
+  ingress:
+    enabled: false
+    className: ""
+    annotations: {}
+    hosts:
+      - host: generator.cicada-sense.example.com
+        paths:
+          - path: /
+            pathType: Prefix
+    tls: []
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+  probes:
+    liveness:
+      enabled: true
+      httpGet:
+        path: /
+        port: http
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+    readiness:
+      enabled: true
+      httpGet:
+        path: /
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+    startup:
+      enabled: true
+      httpGet:
+        path: /
+        port: http
+      initialDelaySeconds: 0
+      periodSeconds: 5
+      timeoutSeconds: 5
+      failureThreshold: 12
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  autoscaling:
+    enabled: false
+    minReplicas: 2
+    maxReplicas: 4
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage:
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 1
+  networkPolicy:
+    enabled: true
+    allowSameNamespace: true
+    allowDns: true
+    extraIngress: []
+    extraEgress: []
+  nodeSelector: {}
+  affinity: {}
+  tolerations: []
+  topologySpreadConstraints: []
+  terminationGracePeriodSeconds: 30
+  volumes: []
+  volumeMounts: []
+  tests:
+    enabled: true
+    path: /
+    image:
+      registry: docker.io
+      repository: busybox
+      tag: "1.37.0"
+      digest: ""
+      pullPolicy: IfNotPresent

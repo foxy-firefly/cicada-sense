@@ -1,0 +1,55 @@
+{
+  "name": "@cicada-sense/backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "npm run prisma:generate && tsc -p tsconfig.json",
+    "db:prepare": "npm run prisma:generate && node ./prisma/prepare-db.mjs",
+    "dev": "tsx src/main.ts",
+    "lint": "biome lint --config-path ${BIOME_CONFIG_PATH:-../../biome.json} src",
+    "lint:fix": "biome check --config-path ${BIOME_CONFIG_PATH:-../../biome.json} --write src",
+    "lint:ci": "biome lint --config-path ${BIOME_CONFIG_PATH:-../../biome.json} --error-on-warnings src --reporter=sarif | tee biome-report.sarif",
+    "prisma:generate": "prisma generate --config ./prisma.config.ts",
+    "start": "node dist/main.js",
+    "test": "npm run db:prepare && vitest run",
+    "test:ci": "npm run db:prepare && vitest run --reporter=default --reporter=junit --outputFile=junit.xml --coverage.enabled --coverage.reporter=lcov --coverage.reporter=text",
+    "typecheck": "npm run prisma:generate && tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@nestjs/common": "^11.1.27",
+    "@nestjs/core": "^11.1.27",
+    "@nestjs/platform-express": "^11.1.27",
+    "@opentelemetry/api": "^1.9.1",
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
+    "@socket.io/redis-adapter": "^8.3.0",
+    "@vitest/coverage-v8": "^4.1.9",
+    "pg": "^8.16.3",
+    "redis": "^6.0.1",
+    "socket.io": "^4.8.3",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.1",
+    "@types/node": "^26.0.1",
+    "prisma": "^7.8.0",
+    "tsx": "^4.22.4",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.9"
+  },
+  "overrides": {
+    "@hono/node-server": "1.19.13",
+    "@nestjs/platform-express": {
+      "multer": "2.2.0"
+    },
+    "esbuild": "0.28.1",
+    "multer": "2.2.0",
+    "ws": "8.21.0"
+  },
+  "allowScripts": {
+    "@nestjs/core@11.1.24": true,
+    "@prisma/client@6.19.3": true,
+    "esbuild@0.28.1": true
+  }
+}

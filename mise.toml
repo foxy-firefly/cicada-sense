@@ -1,0 +1,13 @@
+[tools]
+helm = "3.18.4"
+helm-docs = "1.14.2"
+# Provides the `ct` CLI used by `make helm`.
+helm-ct = "3.14.0"
+# Provides `python3` for pipx-managed CLIs.
+python = "3.13.14"
+# Bootstraps pipx-managed CLIs referenced below.
+pipx = "1.15.0"
+# Required by `ct lint` for chart schema validation.
+"pipx:yamale" = "6.1.0"
+# Required by `ct lint` for YAML lint validation.
+"pipx:yamllint" = "1.38.0"

@@ -1,0 +1,6 @@
+apiVersion: v2
+name: live-data-generator
+description: Cicada Sense live data generator workloads
+type: application
+version: 0.0.0
+appVersion: "0.0.0"

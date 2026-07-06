@@ -1,0 +1,12 @@
+dependencies:
+- name: backend
+  repository: file://charts/backend
+  version: 0.0.0
+- name: frontend
+  repository: file://charts/frontend
+  version: 0.0.0
+- name: live-data-generator
+  repository: file://charts/live-data-generator
+  version: 0.0.0
+digest: sha256:b976a7016cd28bb4584d8953999f72484d9a991f30bb7905716399f856f8a588
+generated: "2026-06-18T17:34:53.070370086+02:00"

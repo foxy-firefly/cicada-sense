@@ -1,0 +1,31 @@
+apiVersion: v2
+name: cicada-sense
+description: Production-grade umbrella chart for the Cicada Sense platform
+home: https://github.com/cigales-cloud/cicada-sense
+icon: https://raw.githubusercontent.com/kubernetes/community/master/icons/png/resources/unlabeled/deploy-128.png
+type: application
+version: 0.0.0
+appVersion: "0.0.0"
+kubeVersion: ">=1.28.0-0"
+keywords:
+  - cicada
+  - monitoring
+  - realtime
+  - ecology
+sources:
+  - https://github.com/cigales-cloud/cicada-sense
+maintainers:
+  - name: Cicada Sense
+dependencies:
+  - name: backend
+    version: 0.0.0
+    repository: file://charts/backend
+    condition: backend.enabled
+  - name: frontend
+    version: 0.0.0
+    repository: file://charts/frontend
+    condition: frontend.enabled
+  - name: live-data-generator
+    version: 0.0.0
+    repository: file://charts/live-data-generator
+    condition: live-data-generator.enabled

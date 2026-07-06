@@ -1,0 +1,88 @@
+---
+version: 2
+
+updates:
+  - package-ecosystem: npm
+    open-pull-requests-limit: 20
+    cooldown:
+      default-days: 7
+    directories:
+      - /application/monitoring-workspace/backend
+      - /application/monitoring-workspace/frontend
+      - /application/live-data-generator
+    versioning-strategy: increase
+    schedule:
+      interval: weekly
+    groups:
+      npm-react-dependencies:
+        patterns:
+          - react
+          - react-dom
+          - "@vitejs/*"
+      npm-nestjs-dependencies:
+        patterns:
+          - "@nestjs/*"
+      npm-testing-dependencies:
+        patterns:
+          - vitest
+          - "@testing-library/*"
+      npm-development-dependencies:
+        dependency-type: development
+        patterns:
+          - "*"
+      npm-production-dependencies:
+        dependency-type: production
+        patterns:
+          - "*"
+
+  - package-ecosystem: docker
+    open-pull-requests-limit: 20
+    cooldown:
+      default-days: 7
+    directories:
+      - /docker/backend
+      - /docker/frontend
+      - /docker/live-data-generator
+    schedule:
+      interval: weekly
+    groups:
+      docker-dependencies:
+        patterns:
+          - "*"
+
+  - package-ecosystem: helm
+    open-pull-requests-limit: 20
+    cooldown:
+      default-days: 7
+    directories:
+      - /charts/application
+    schedule:
+      interval: weekly
+    groups:
+      helm-dependencies:
+        patterns:
+          - "*"
+
+  - package-ecosystem: docker-compose
+    directory: /
+    open-pull-requests-limit: 20
+    cooldown:
+      default-days: 7
+    schedule:
+      interval: weekly
+    groups:
+      docker-compose-dependencies:
+        patterns:
+          - "*"
+
+  - package-ecosystem: github-actions
+    open-pull-requests-limit: 20
+    directory: /
+    cooldown:
+      default-days: 7
+    schedule:
+      interval: weekly
+    groups:
+      github-actions-dependencies:
+        patterns:
+          - "*"

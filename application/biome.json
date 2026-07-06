@@ -1,0 +1,316 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.4.10/schema.json",
+  "root": false,
+  "files": {
+    "includes": [
+      "**",
+      "!**/node_modules",
+      "!**/dist",
+      "!**/dist-types",
+      "!**/coverage",
+      "!coverage",
+      "!**/lcov-report",
+      "!**/frontend/src/vite-env.d.ts"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 120
+  },
+  "javascript": {
+    "parser": {
+      "unsafeParameterDecoratorsEnabled": true
+    }
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "correctness": {
+        "noUnusedImports": "error",
+        "noUnusedVariables": "error"
+      },
+      "complexity": {
+        "noStaticOnlyClass": "off",
+        "noThisInStatic": "off"
+      },
+      "style": {
+        "noNonNullAssertion": "error"
+      },
+      "suspicious": {
+        "noConsole": { "level": "error", "options": { "allow": ["log"] } }
+      }
+    }
+  },
+  "overrides": [
+    {
+      "includes": [
+        "monitoring-workspace/frontend/src/application/**/*.{ts,tsx}",
+        "!monitoring-workspace/frontend/src/application/**/*.test.{ts,tsx}"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["**/app", "**/app/**", "**/presentation", "**/presentation/**"],
+                    "message": "Frontend application layer may only import application, domain, and infrastructure code."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "monitoring-workspace/frontend/src/domain/**/*.{ts,tsx}",
+        "!monitoring-workspace/frontend/src/domain/**/*.test.{ts,tsx}"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": [
+                      "**/app",
+                      "**/app/**",
+                      "**/application",
+                      "**/application/**",
+                      "**/infrastructure",
+                      "**/infrastructure/**",
+                      "**/presentation",
+                      "**/presentation/**"
+                    ],
+                    "message": "Frontend domain layer may only import domain code."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "monitoring-workspace/frontend/src/infrastructure/**/*.{ts,tsx}",
+        "!monitoring-workspace/frontend/src/infrastructure/**/*.test.{ts,tsx}"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": [
+                      "**/app",
+                      "**/app/**",
+                      "**/application",
+                      "**/application/**",
+                      "**/presentation",
+                      "**/presentation/**"
+                    ],
+                    "message": "Frontend infrastructure layer may only import infrastructure and domain code."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "monitoring-workspace/frontend/src/presentation/**/*.{ts,tsx}",
+        "!monitoring-workspace/frontend/src/presentation/**/*.test.{ts,tsx}"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["**/app", "**/app/**", "**/infrastructure", "**/infrastructure/**"],
+                    "message": "Frontend presentation layer may only import presentation, application, and domain code."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "monitoring-workspace/backend/src/application/**/*.ts",
+        "!monitoring-workspace/backend/src/application/**/*.test.ts"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": [
+                      "**/app",
+                      "**/app/**",
+                      "**/fixtures",
+                      "**/fixtures/**",
+                      "**/infrastructure",
+                      "**/infrastructure/**",
+                      "**/presentation",
+                      "**/presentation/**"
+                    ],
+                    "message": "Application layer may only import application and domain code."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "monitoring-workspace/backend/src/domain/**/*.ts",
+        "!monitoring-workspace/backend/src/domain/**/*.test.ts"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": [
+                      "**/app",
+                      "**/app/**",
+                      "**/application",
+                      "**/application/**",
+                      "**/fixtures",
+                      "**/fixtures/**",
+                      "**/infrastructure",
+                      "**/infrastructure/**",
+                      "**/presentation",
+                      "**/presentation/**"
+                    ],
+                    "message": "Domain layer may only import domain code."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "monitoring-workspace/backend/src/fixtures/**/*.ts",
+        "!monitoring-workspace/backend/src/fixtures/**/*.test.ts"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": [
+                      "**/app",
+                      "**/app/**",
+                      "**/application",
+                      "**/application/**",
+                      "**/infrastructure",
+                      "**/infrastructure/**",
+                      "**/presentation",
+                      "**/presentation/**"
+                    ],
+                    "message": "Fixtures layer may only import fixtures and domain code."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "monitoring-workspace/backend/src/infrastructure/**/*.ts",
+        "!monitoring-workspace/backend/src/infrastructure/**/*.test.ts"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": [
+                      "**/app",
+                      "**/app/**",
+                      "**/fixtures",
+                      "**/fixtures/**",
+                      "**/presentation",
+                      "**/presentation/**"
+                    ],
+                    "message": "Infrastructure layer may only import infrastructure, application, and domain code."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "monitoring-workspace/backend/src/presentation/**/*.ts",
+        "!monitoring-workspace/backend/src/presentation/**/*.test.ts"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": [
+                      "**/app",
+                      "**/app/**",
+                      "**/fixtures",
+                      "**/fixtures/**",
+                      "**/infrastructure",
+                      "**/infrastructure/**"
+                    ],
+                    "message": "Presentation layer may only import presentation, application, and domain code."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "assist": { "actions": { "source": { "organizeImports": "on" } } }
+}

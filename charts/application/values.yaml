@@ -1,0 +1,20 @@
+global:
+  fullnameOverride: ""
+  imageRegistry: ""
+  imagePullSecrets: []
+  partOf: cicada-sense
+
+backend:
+  enabled: true
+  image: {}
+
+frontend:
+  enabled: true
+  image: {}
+
+live-data-generator:
+  enabled: true
+  api:
+    image: {}
+  ui:
+    image: {}

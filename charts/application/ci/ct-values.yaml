@@ -1,0 +1,64 @@
+backend:
+  image:
+    registry: docker.io
+    repository: hashicorp/http-echo
+    tag: "1.0.0"
+  probes:
+    liveness:
+      enabled: false
+    readiness:
+      enabled: false
+    startup:
+      enabled: false
+  tests:
+    enabled: false
+    path: /
+frontend:
+  image:
+    registry: docker.io
+    repository: hashicorp/http-echo
+    tag: "1.0.0"
+  probes:
+    liveness:
+      enabled: false
+    readiness:
+      enabled: false
+    startup:
+      enabled: false
+  tests:
+    enabled: false
+    path: /
+live-data-generator:
+  api:
+    image:
+      registry: docker.io
+      repository: hashicorp/http-echo
+      tag: "1.0.0"
+    probes:
+      liveness:
+        enabled: false
+      readiness:
+        enabled: false
+      startup:
+        enabled: false
+    tests:
+      enabled: false
+      path: /
+
+  ui:
+    image:
+      registry: docker.io
+      repository: hashicorp/http-echo
+      tag: "1.0.0"
+    probes:
+      liveness:
+        enabled: false
+      readiness:
+        enabled: false
+      startup:
+        enabled: false
+    tests:
+      enabled: false
+      path: /
+
+# End of chart-testing install overrides.

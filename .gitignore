@@ -1,0 +1,10 @@
+**/node_modules/
+**/dist/
+**/dist-types/
+**/coverage/
+**/junit.xml
+.env
+.env.*
+*.log
+charts/**/charts/*.tgz
+.ci-github-nodejs-cache

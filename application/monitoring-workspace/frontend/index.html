@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cicada Sense</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body>
+    <script>
+      const themePreferenceStorageKey = "cicada-sense:theme-preference";
+      const storedThemePreference = window.localStorage.getItem(themePreferenceStorageKey);
+      const themePreference =
+        storedThemePreference === "light" || storedThemePreference === "dark" || storedThemePreference === "system"
+          ? storedThemePreference
+          : "system";
+      const prefersDark =
+        typeof window.matchMedia === "function" && window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const resolvedTheme = themePreference === "system" ? (prefersDark ? "dark" : "light") : themePreference;
+      document.documentElement.dataset.themePreference = themePreference;
+      document.documentElement.dataset.theme = resolvedTheme;
+      document.documentElement.style.colorScheme = resolvedTheme;
+    </script>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
